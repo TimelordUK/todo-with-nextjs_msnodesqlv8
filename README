@@ -1,0 +1,15 @@
+
+yarn install
+
+create table in db
+
+create table Task (
+	id int identity(1,1) not null,
+	completed int not null,
+	task varchar(200) not null
+)
+
+change conStr in utils.dbConnect
+
+yarn dev
+
