@@ -11,22 +11,22 @@ export default async (req, res) => {
 	// Create task
 	if (method === "POST") {
 		try {
-			const q1 = 'select max(_id) as id from Task'
+			await con.promises.beginTransaction()
+			const q1 = `insert into Task (task, completed) values ('${req.body.task}', 0)`
 			console.log(q1)
-			const queryRes = await con.promises.query(q1)
-			const lastId = queryRes.first[0].id
-			const newTask = {
-				completed: false,
-				task: req.body.task,
-				_id: lastId + 1
-			} as Task
-			console.log(JSON.stringify(newTask, null, 4))
-			const q2 = `insert into Task (task, completed) values ('${newTask.task}', 0)`
+			await con.promises.query(q1)
+			const q2 = 'select max(_id) as id from Task'
 			console.log(q2)
-			await con.promises.query(q2)
+			const queryRes = await con.promises.query(q2)
+			const lastId = queryRes.first[0].id
+			const q3 = `select * from Task where _id = ${lastId}`
+			console.log(q3)
+			const fetched = await con.promises.query(q3)
+			const added = fetched.first[0] as Task
+			await con.promises.commit()
 			res
 				.status(201)
-				.json({ data: newTask, message: "Task added successfully" });
+				.json({ data: added, message: "Task added successfully" });
 		} catch (error) {
 			res.status(500).json({ message: "Internal Server Error" });
 			console.log(error);
