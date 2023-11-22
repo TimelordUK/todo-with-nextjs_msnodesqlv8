@@ -22,8 +22,8 @@ export default function Home(props) {
 				const { data } = await axios.put(url + "/" + task._id, {
 					task: task.task,
 				});
-				const originalTasks = [...tasks];
-				const index = originalTasks.findIndex((t) => t._id === task._id);
+				const originalTasks: Task[] = [...tasks];
+				const index = originalTasks.findIndex((t: Task) => t._id === task._id);
 				originalTasks[index] = data.data;
 				setTasks(originalTasks);
 				setTask({ task: "" });

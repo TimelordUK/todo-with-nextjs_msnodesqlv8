@@ -1,29 +1,30 @@
 import dbConnect from "../../../utils/dbConnect";
 import {Task} from "../../../models/Task";
+import { Connection, ConnectionPromises } from "msnodesqlv8/types";
 
 export default async (req, res) => {
 	const { method } = req;
 	// Connect to database
 	const sql = dbConnect();
 	console.log(`[index] opening connection`)
-	const con = await sql.driver.promises.open(sql.connStr)
-
+	const con: Connection = await sql.driver.promises.open(sql.connStr)
+	const promises: ConnectionPromises = con.promises
 	// Create task
 	if (method === "POST") {
 		try {
-			await con.promises.beginTransaction()
+			await promises.beginTransaction()
 			const q1 = `insert into Task (task, completed) values ('${req.body.task}', 0)`
 			console.log(q1)
-			await con.promises.query(q1)
+			await promises.query(q1)
 			const q2 = 'select max(_id) as id from Task'
 			console.log(q2)
-			const queryRes = await con.promises.query(q2)
+			const queryRes = await promises.query(q2)
 			const lastId = queryRes.first[0].id
-			const q3 = `select * from Task where _id = ${lastId}`
+			const q3 = `select _id, task, completed from Task where _id = ${lastId}`
 			console.log(q3)
-			const fetched = await con.promises.query(q3)
+			const fetched = await promises.query(q3)
 			const added = fetched.first[0] as Task
-			await con.promises.commit()
+			await promises.commit()
 			res
 				.status(201)
 				.json({ data: added, message: "Task added successfully" });
@@ -35,9 +36,9 @@ export default async (req, res) => {
 
 	if (method === "GET") {
 		try {
-			const sqlQuery = 'select * from Task'
+			const sqlQuery = 'select _id, task, completed from Task'
 			console.log(sqlQuery)
-			const q = await con.promises.query(sqlQuery);
+			const q = await promises.query(sqlQuery);
 			const tasks: Task[] = q.first
 			console.log(tasks)
 			res.status(200).json({ data: tasks });
