@@ -1,12 +1,13 @@
 import { useState } from "react";
 import axios from "axios";
 import styles from "../styles/Home.module.css";
+import {Task} from "../models/Task";
 
 const url = "http://localhost:3000/api/task";
 
 export default function Home(props) {
-	const [tasks, setTasks] = useState(props.tasks);
-	const [task, setTask] = useState({ task: "" });
+	const [tasks, setTasks] = useState<Array<Task>>(props.tasks);
+	const [task, setTask] = useState<Partial<Task>>({ task: "" });
 
 	const handleChange = ({ currentTarget: input }) => {
 		input.value === ""
