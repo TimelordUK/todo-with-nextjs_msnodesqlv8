@@ -11,7 +11,7 @@ export default async (req, res) => {
 
 	if (method === "PUT") {
 		try {
-			const q = `update Task set task='${req.body.task}' where id = ${id}`
+			const q = `update Task set task='${req.body.task}' where _id = ${id}`
 			console.log(q)
 			await con.promises.query(q)
 			const result = {
@@ -31,7 +31,7 @@ export default async (req, res) => {
 
 	if (method === "DELETE") {
 		try {
-			const q = `delete from Task where id = ${id}`
+			const q = `delete from Task where _id = ${id}`
 			console.log(q)
 			await con.promises.query(q)
 			res.status(200).json({ message: "Task Deleted Successfully" });

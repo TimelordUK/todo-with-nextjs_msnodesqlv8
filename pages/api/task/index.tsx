@@ -1,4 +1,5 @@
 import dbConnect from "../../../utils/dbConnect";
+import {Task} from "../../../models/Task";
 
 export default async (req, res) => {
 	const { method } = req;
@@ -10,7 +11,7 @@ export default async (req, res) => {
 	// Create task
 	if (method === "POST") {
 		try {
-			const q1 = 'select max(id) as id from Task'
+			const q1 = 'select max(_id) as id from Task'
 			console.log(q1)
 			const queryRes = await con.promises.query(q1)
 			const lastId = queryRes.first[0].id
@@ -18,7 +19,7 @@ export default async (req, res) => {
 				completed: false,
 				task: req.body.task,
 				_id: lastId + 1
-			}
+			} as Task
 			console.log(JSON.stringify(newTask, null, 4))
 			const q2 = `insert into Task (task, completed) values ('${newTask.task}', 0)`
 			console.log(q2)
@@ -37,9 +38,9 @@ export default async (req, res) => {
 			const sqlQuery = 'select * from Task'
 			console.log(sqlQuery)
 			const q = await con.promises.query(sqlQuery);
-			q.first.map(r => r._id = r.id)
-			console.log(q.first)
-			res.status(200).json({ data: q.first });
+			const tasks: Task[] = q.first
+			console.log(tasks)
+			res.status(200).json({ data: tasks });
 		} catch (error) {
 			res.status(500).json({ message: "Internal Server Error" });
 			console.log(error);
