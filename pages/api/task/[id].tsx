@@ -1,5 +1,5 @@
 import {NextApiRequest, NextApiResponse} from "next";
-import {TaskVerbs} from "./TaskVerbs";
+import {TaskVerbs} from "./TaskVerbs"
 const router = new TaskVerbs()
 export default async (req: NextApiRequest, res: NextApiResponse) => {
 	const { method } = req;
@@ -27,4 +27,4 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 			})
 		}
 	}
-};
+}

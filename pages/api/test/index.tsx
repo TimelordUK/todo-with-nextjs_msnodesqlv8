@@ -1,5 +1,5 @@
-import {NextApiRequest, NextApiResponse} from "next";
-import {TestVerbs} from "./TestVerbs";
+import {NextApiRequest, NextApiResponse} from "next"
+import {TestVerbs} from "./TestVerbs"
 
 const router = new TestVerbs()
 export default async (req: NextApiRequest, res: NextApiResponse) => {

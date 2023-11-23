@@ -1,93 +1,115 @@
-import * as React from "react";
-import {useState} from "react";
-import styles from "../styles/Home.module.css";
-import {Task} from "../models/Task";
+import * as React from "react"
+import {useState} from "react"
+import styles from "../styles/Home.module.css"
+import {Task} from "../models/Task"
 
-const url = "http://localhost:3000/api/task";
+class TaskDataSource {
+	private url = "http://localhost:3000/api/task"
+	public async GET(): Promise<any> {
+		const resp: Response = await fetch(this.url, {
+			method: 'GET',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		})
+		return resp.json()
+	}
 
-async function getData(u: string) {
-	const resp: Response = await fetch(u, {
-		method: 'GET',
-		headers: {
-			'Content-Type': 'application/json',
-		},
-	})
-	return await resp.json()
+	public async DELETE(id: number) {
+		const resp: Response = await fetch(`${this.url}/${id}`, {
+			method: 'DELETE',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+		})
+		return resp.json()
+	}
+
+	public async PUT(id: number, data: Partial<Task>) {
+		const resp: Response = await fetch(`${this.url}/${id}`, {
+			method: 'PUT',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(data)
+		})
+		return resp.json()
+	}
+
+	public async POST(data: Partial<Task>) {
+		const resp: Response = await fetch(this.url, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(data)
+		})
+		return resp.json()
+	}
 }
-
-async function methodData(u: string, method: string, data: any) {
-	const resp: Response = await fetch(u, {
-		method: method,
-		headers: {
-			'Content-Type': 'application/json',
-		},
-		body: JSON.stringify(data)
-	})
-	return await resp.json()
-}
-
+const fetcher = new TaskDataSource()
 export default function Home(props: any): (React.ReactElement | null) {
 	const [tasks, setTasks] = useState<Array<Task>>(props.tasks);
-	const [task, setTask] = useState<Partial<Task>>({ task: "" });
+	const [task, setTask] = useState<Partial<Task>>({ task: "" })
 
 	const handleChange = ({ currentTarget: input }) => {
 		input.value === ""
 			? setTask({ task: "" })
-			: setTask((prev) => ({ ...prev, task: input.value }));
+			: setTask((prev) => ({ ...prev, task: input.value }))
 	};
 
 	const addTask = async (e) => {
-		e.preventDefault();
+		e.preventDefault()
 		try {
 			if (task._id) {
-				const data = await methodData(`${url}/${task._id}`, 'PUT', task)
-				const originalTasks: Task[] = [...tasks];
-				const index = originalTasks.findIndex((t: Task) => t._id === task._id);
-				originalTasks[index] = data.data;
+				const data = await fetcher.PUT(task._id, task)
+				const originalTasks: Task[] = [...tasks]
+				const index = originalTasks.findIndex((t: Task) => t._id === task._id)
+				originalTasks[index] = data.data
 				setTasks(originalTasks);
-				setTask({ task: "" });
-				console.log(data.message);
+				setTask({ task: "" })
+				console.log(data.message)
 			} else {
-				const data = await methodData(url, 'POST', task)
-				setTasks((prev) => [...prev, data.data]);
-				setTask({ task: "" });
-				console.log(data.message);
+				const data = await fetcher.POST(task)
+				setTasks((prev: Task[]) => [...prev, data.data])
+				setTask({ task: "" })
+				console.log(data.message)
 			}
 		} catch (error) {
-			console.log(error);
+			console.log(error)
 		}
-	};
+	}
 
 	const editTask = (id: number) => {
-		const currentTask = tasks.filter((task) => task._id === id);
-		setTask(currentTask[0]);
+		const currentTask: Task[] = tasks.filter((task) => task._id === id)
+		setTask(currentTask[0])
 	};
 
 	const updateTask = async (id: number) => {
 		try {
 			const originalTasks = [...tasks];
-			const index = originalTasks.findIndex((t) => t._id === id);
-			const data = await methodData(url + "/" + id, 'PUT', {
+			const index = originalTasks.findIndex((t) => t._id === id)
+			const data = await fetcher.PUT(id,  {
 				task: originalTasks[index].task,
 				completed: !originalTasks[index].completed,
 			})
 			originalTasks[index] = data.data;
-			setTasks(originalTasks);
-			console.log(data.message);
+			setTasks(originalTasks)
+			console.log(data.message)
 		} catch (error) {
-			console.log(error);
+			console.log(error)
 		}
-	};
+	}
 
 	const deleteTask = async (id: number) => {
 		try {
-			const { data } = await methodData(`${url}/${id}`, 'DELETE', {});
-			setTasks((prev) => prev.filter((task) => task._id !== id));
-			console.log(data.message);
+			const { data } = await fetcher.DELETE(id)
+			setTasks((prev: Task[]) => prev.filter((task) => task._id !== id))
+			console.log(data.message)
 		} catch (error) {
-			console.log(error);
+			console.log(error)
 		}
-	};
+	}
 
 	return (
 		<main className={styles.main}>
@@ -139,14 +161,14 @@ export default function Home(props: any): (React.ReactElement | null) {
 				{tasks.length === 0 && <h2 className={styles.no_tasks}>No tasks</h2>}
 			</div>
 		</main>
-	);
+	)
 }
 
 export const getServerSideProps = async () => {
-	const data = await getData(url)
+	const data = await fetcher.GET()
 	return {
 		props: {
 			tasks: data.data,
-		},
-	};
-};
+		}
+	}
+}
