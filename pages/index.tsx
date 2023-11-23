@@ -1,11 +1,32 @@
-import { useState } from "react";
-import axios from "axios";
+import * as React from "react";
+import {useState} from "react";
 import styles from "../styles/Home.module.css";
 import {Task} from "../models/Task";
 
 const url = "http://localhost:3000/api/task";
 
-export default function Home(props) {
+async function getData(u: string) {
+	const resp: Response = await fetch(u, {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+	})
+	return await resp.json()
+}
+
+async function methodData(u: string, method: string, data: any) {
+	const resp: Response = await fetch(u, {
+		method: method,
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify(data)
+	})
+	return await resp.json()
+}
+
+export default function Home(props: any): (React.ReactElement | null) {
 	const [tasks, setTasks] = useState<Array<Task>>(props.tasks);
 	const [task, setTask] = useState<Partial<Task>>({ task: "" });
 
@@ -19,9 +40,7 @@ export default function Home(props) {
 		e.preventDefault();
 		try {
 			if (task._id) {
-				const { data } = await axios.put(url + "/" + task._id, {
-					task: task.task,
-				});
+				const data = await methodData(`${url}/${task._id}`, 'PUT', task)
 				const originalTasks: Task[] = [...tasks];
 				const index = originalTasks.findIndex((t: Task) => t._id === task._id);
 				originalTasks[index] = data.data;
@@ -29,7 +48,7 @@ export default function Home(props) {
 				setTask({ task: "" });
 				console.log(data.message);
 			} else {
-				const { data } = await axios.post(url, task);
+				const data = await methodData(url, 'POST', task)
 				setTasks((prev) => [...prev, data.data]);
 				setTask({ task: "" });
 				console.log(data.message);
@@ -39,18 +58,19 @@ export default function Home(props) {
 		}
 	};
 
-	const editTask = (id) => {
+	const editTask = (id: number) => {
 		const currentTask = tasks.filter((task) => task._id === id);
 		setTask(currentTask[0]);
 	};
 
-	const updateTask = async (id) => {
+	const updateTask = async (id: number) => {
 		try {
 			const originalTasks = [...tasks];
 			const index = originalTasks.findIndex((t) => t._id === id);
-			const { data } = await axios.put(url + "/" + id, {
+			const data = await methodData(url + "/" + id, 'PUT', {
+				task: originalTasks[index].task,
 				completed: !originalTasks[index].completed,
-			});
+			})
 			originalTasks[index] = data.data;
 			setTasks(originalTasks);
 			console.log(data.message);
@@ -59,9 +79,9 @@ export default function Home(props) {
 		}
 	};
 
-	const deleteTask = async (id) => {
+	const deleteTask = async (id: number) => {
 		try {
-			const { data } = await axios.delete(url + "/" + id);
+			const { data } = await methodData(`${url}/${id}`, 'DELETE', {});
 			setTasks((prev) => prev.filter((task) => task._id !== id));
 			console.log(data.message);
 		} catch (error) {
@@ -85,7 +105,7 @@ export default function Home(props) {
 						{task._id ? "Update" : "Add"}
 					</button>
 				</form>
-				{tasks.map((task) => (
+				{tasks.map((task: Task) => (
 					<div className={styles.task_container} key={task._id}>
 						<input
 							type="checkbox"
@@ -123,7 +143,7 @@ export default function Home(props) {
 }
 
 export const getServerSideProps = async () => {
-	const { data } = await axios.get(url);
+	const data = await getData(url)
 	return {
 		props: {
 			tasks: data.data,

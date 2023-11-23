@@ -11,18 +11,15 @@ export default async (req, res) => {
 
 	if (method === "PUT") {
 		try {
-			const q = `update Task set task='${req.body.task}' where _id = ${id}`
+			const task = req.body
+			console.log(JSON.stringify(task))
+			const q = `update Task set task='${task.task}', completed='${task.completed ? 1 : 0}' where _id = ${id}`
 			console.log(q)
 			await con.promises.query(q)
-			const result = {
-				_id: id,
-				task: req.body.task,
-				completed: false
-			}
-
+			const result = await con.promises.query(`select _id, task, completed from Task where _id = ${id}`)
 			res
 				.status(200)
-				.json({ data: result, message: "Task Updated Successfully" });
+				.json({ data: result.first[0], message: "Task Updated Successfully" });
 		} catch (error) {
 			res.status(500).json({ message: "Internal Server Error" });
 			console.log(error);
