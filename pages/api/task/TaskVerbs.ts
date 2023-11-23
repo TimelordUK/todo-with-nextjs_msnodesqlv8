@@ -1,18 +1,19 @@
-import {Task} from "../../../models/Task";
-import {Connection, ConnectionPromises} from "msnodesqlv8/types";
-import dbConnect from "../../../utils/dbConnect";
-import {NextApiRequest} from "next";
+import {Task} from "../../../models/Task"
+import {Connection, ConnectionPromises} from "msnodesqlv8/types"
+import dbConnect from "../../../utils/dbConnect"
+import {NextApiRequest} from "next"
+import {Verbs} from "../../../models/Verbs"
 
-export class TaskVerbs {
+export class TaskVerbs implements Verbs {
 
-    private async getConnection(): Promise<ConnectionPromises> {
+    async getConnection(): Promise<ConnectionPromises> {
         const sql = dbConnect()
         console.log(`[index] opening connection`)
         const con: Connection = await sql.driver.promises.open(sql.connStr)
         return con.promises
     }
 
-    public async GET(req: NextApiRequest): Promise<any> {
+    async GET(req: NextApiRequest): Promise<any> {
         const promises: ConnectionPromises = await this.getConnection()
         const sqlQuery = 'select _id, task, completed from Task'
         console.log(sqlQuery)
@@ -23,7 +24,7 @@ export class TaskVerbs {
         return tasks
     }
 
-    public async POST(req: NextApiRequest): Promise<any> {
+    async POST(req: NextApiRequest): Promise<any> {
         const promises: ConnectionPromises = await this.getConnection()
         await promises.beginTransaction()
         const q1 = `insert into Task (task, completed) values ('${req.body.task}', 0)`
@@ -42,8 +43,8 @@ export class TaskVerbs {
         return added
     }
 
-    public async DELETE(req: NextApiRequest): Promise<any> {
-        const { id } = req.query;
+    async DELETE(req: NextApiRequest): Promise<any> {
+        const {id} = req.query;
         const promises: ConnectionPromises = await this.getConnection()
         const q = `delete from Task where _id = ${id}`
         console.log(q)
@@ -52,8 +53,8 @@ export class TaskVerbs {
         return
     }
 
-    public async PUT(req: NextApiRequest): Promise<any> {
-        const { id } = req.query;
+    async PUT(req: NextApiRequest): Promise<any> {
+        const {id} = req.query;
         const task = req.body
         const promises: ConnectionPromises = await this.getConnection()
         console.log(JSON.stringify(task))
