@@ -2,52 +2,9 @@ import * as React from "react"
 import {useState} from "react"
 import styles from "../styles/Home.module.css"
 import {Task} from "../models/Task"
+import {TaskDataSource} from "../datasource/TaskDataSource"
 
-class TaskDataSource {
-	private url = "http://localhost:3000/api/task"
-	public async GET(): Promise<any> {
-		const resp: Response = await fetch(this.url, {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-		})
-		return resp.json()
-	}
-
-	public async DELETE(id: number) {
-		const resp: Response = await fetch(`${this.url}/${id}`, {
-			method: 'DELETE',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-		})
-		return resp.json()
-	}
-
-	public async PUT(id: number, data: Partial<Task>) {
-		const resp: Response = await fetch(`${this.url}/${id}`, {
-			method: 'PUT',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(data)
-		})
-		return resp.json()
-	}
-
-	public async POST(data: Partial<Task>) {
-		const resp: Response = await fetch(this.url, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-			},
-			body: JSON.stringify(data)
-		})
-		return resp.json()
-	}
-}
-const fetcher = new TaskDataSource()
+const taskDataSource = new TaskDataSource()
 export default function Home(props: any): (React.ReactElement | null) {
 	const [tasks, setTasks] = useState<Array<Task>>(props.tasks);
 	const [task, setTask] = useState<Partial<Task>>({ task: "" })
@@ -62,7 +19,7 @@ export default function Home(props: any): (React.ReactElement | null) {
 		e.preventDefault()
 		try {
 			if (task._id) {
-				const data = await fetcher.PUT(task._id, task)
+				const data = await taskDataSource.PUT(task._id, task)
 				const originalTasks: Task[] = [...tasks]
 				const index = originalTasks.findIndex((t: Task) => t._id === task._id)
 				originalTasks[index] = data.data
@@ -70,7 +27,7 @@ export default function Home(props: any): (React.ReactElement | null) {
 				setTask({ task: "" })
 				console.log(data.message)
 			} else {
-				const data = await fetcher.POST(task)
+				const data = await taskDataSource.POST(task)
 				setTasks((prev: Task[]) => [...prev, data.data])
 				setTask({ task: "" })
 				console.log(data.message)
@@ -89,7 +46,7 @@ export default function Home(props: any): (React.ReactElement | null) {
 		try {
 			const originalTasks = [...tasks];
 			const index = originalTasks.findIndex((t) => t._id === id)
-			const data = await fetcher.PUT(id,  {
+			const data = await taskDataSource.PUT(id,  {
 				task: originalTasks[index].task,
 				completed: !originalTasks[index].completed,
 			})
@@ -103,7 +60,7 @@ export default function Home(props: any): (React.ReactElement | null) {
 
 	const deleteTask = async (id: number) => {
 		try {
-			const { data } = await fetcher.DELETE(id)
+			const { data } = await taskDataSource.DELETE(id)
 			setTasks((prev: Task[]) => prev.filter((task) => task._id !== id))
 			console.log(data.message)
 		} catch (error) {
@@ -165,7 +122,7 @@ export default function Home(props: any): (React.ReactElement | null) {
 }
 
 export const getServerSideProps = async () => {
-	const data = await fetcher.GET()
+	const data = await taskDataSource.GET()
 	return {
 		props: {
 			tasks: data.data,

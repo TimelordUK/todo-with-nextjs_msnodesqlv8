@@ -2,7 +2,7 @@ import {Task} from "../../../models/Task"
 import {Connection, ConnectionPromises} from "msnodesqlv8/types"
 import dbConnect from "../../../utils/dbConnect"
 import {NextApiRequest} from "next"
-import {Verbs} from "../../../models/Verbs"
+import {Verbs} from "../../../datasource/Verbs"
 
 export class TaskVerbs implements Verbs {
 
@@ -13,7 +13,7 @@ export class TaskVerbs implements Verbs {
         return con.promises
     }
 
-    async GET(req: NextApiRequest): Promise<any> {
+    async GET(_: NextApiRequest): Promise<any> {
         const promises: ConnectionPromises = await this.getConnection()
         const sqlQuery = 'select _id, task, completed from Task'
         console.log(sqlQuery)
