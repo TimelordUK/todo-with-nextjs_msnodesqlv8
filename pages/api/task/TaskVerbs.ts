@@ -41,4 +41,27 @@ export class TaskVerbs {
         await promises.close()
         return added
     }
+
+    public async DELETE(req: NextApiRequest): Promise<any> {
+        const { id } = req.query;
+        const promises: ConnectionPromises = await this.getConnection()
+        const q = `delete from Task where _id = ${id}`
+        console.log(q)
+        await promises.query(q)
+        await promises.close()
+        return
+    }
+
+    public async PUT(req: NextApiRequest): Promise<any> {
+        const { id } = req.query;
+        const task = req.body
+        const promises: ConnectionPromises = await this.getConnection()
+        console.log(JSON.stringify(task))
+        const q = `update Task set task='${task.task}', completed='${task.completed ? 1 : 0}' where _id = ${id}`
+        console.log(q)
+        await promises.query(q)
+        const result = await promises.query(`select _id, task, completed from Task where _id = ${id}`)
+        await promises.close()
+        return result.first[0] as Task
+    }
 }
