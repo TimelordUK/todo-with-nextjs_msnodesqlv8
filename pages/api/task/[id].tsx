@@ -1,6 +1,7 @@
 import dbConnect from "../../../utils/dbConnect";
+import {NextApiRequest, NextApiResponse} from "next";
 
-export default async (req, res) => {
+export default async (req: NextApiRequest, res: NextApiResponse) => {
 	const { method } = req;
 	const { id } = req.query;
 	console.log(JSON.stringify(req.query, null, 4))

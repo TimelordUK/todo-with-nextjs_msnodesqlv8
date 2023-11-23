@@ -1,8 +1,9 @@
 import dbConnect from "../../../utils/dbConnect";
 import {Task} from "../../../models/Task";
 import { Connection, ConnectionPromises } from "msnodesqlv8/types";
+import {NextApiRequest, NextApiResponse} from "next";
 
-export default async (req, res) => {
+export default async (req: NextApiRequest, res: NextApiResponse) => {
 	const { method } = req;
 	// Connect to database
 	const sql = dbConnect()
