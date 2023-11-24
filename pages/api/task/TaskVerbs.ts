@@ -13,7 +13,7 @@ export class TaskVerbs implements Verbs {
         return con.promises
     }
 
-    async GET(_: NextApiRequest): Promise<any> {
+    public async GET(_: NextApiRequest): Promise<any> {
         const promises: ConnectionPromises = await this.getConnection()
         const sqlQuery = 'select _id, task, completed from Task'
         console.log(sqlQuery)
@@ -24,7 +24,7 @@ export class TaskVerbs implements Verbs {
         return tasks
     }
 
-    async POST(req: NextApiRequest): Promise<any> {
+    public async POST(req: NextApiRequest): Promise<any> {
         const promises: ConnectionPromises = await this.getConnection()
         await promises.beginTransaction()
         const q1 = `insert into Task (task, completed) values ('${req.body.task}', 0)`
@@ -43,7 +43,7 @@ export class TaskVerbs implements Verbs {
         return added
     }
 
-    async DELETE(req: NextApiRequest): Promise<any> {
+    public async DELETE(req: NextApiRequest): Promise<any> {
         const {id} = req.query;
         const promises: ConnectionPromises = await this.getConnection()
         const q = `delete from Task where _id = ${id}`
@@ -53,7 +53,7 @@ export class TaskVerbs implements Verbs {
         return
     }
 
-    async PUT(req: NextApiRequest): Promise<any> {
+    public  async PUT(req: NextApiRequest): Promise<any> {
         const {id} = req.query;
         const task = req.body
         const promises: ConnectionPromises = await this.getConnection()

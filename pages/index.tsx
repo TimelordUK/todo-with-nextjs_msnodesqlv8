@@ -15,7 +15,7 @@ async function getConnection(): Promise<ConnectionPromises> {
 return con.promises
 }
 
-const Home = (props: any): (React.ReactElement | null) => {
+const Home = (props: Record<string, Task[]>): (React.ReactElement | null) => {
 	const [tasks, setTasks] = useState<Array<Task>>(props.tasks);
 	const [task, setTask] = useState<Partial<Task>>({task: ""})
 

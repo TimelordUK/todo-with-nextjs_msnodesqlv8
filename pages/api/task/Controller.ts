@@ -7,9 +7,13 @@ export class Controller {
         switch (method) {
             case 'GET': {
                 verbs.GET(req).then(tasks => {
-                    res.status(200).json({data: tasks});
+                    res
+                        .status(200)
+                        .json({data: tasks});
                 }).catch(e => {
-                    res.status(500).json({message: "Internal Server Error " + e.message});
+                    res
+                        .status(500)
+                        .json({message: "Internal Server Error " + e.message});
                 })
                 break
             }
@@ -20,7 +24,9 @@ export class Controller {
                         .status(201)
                         .json({data: added, message: "Task added successfully"});
                 }).catch(e => {
-                    res.status(500).json({message: "Internal Server Error " + e.message});
+                    res
+                        .status(500)
+                        .json({message: "Internal Server Error " + e.message});
                 })
                 break
             }
@@ -31,7 +37,9 @@ export class Controller {
                         .status(200)
                         .json({data: added, message: "Task Deleted Successfully"});
                 }).catch(e => {
-                    res.status(500).json({message: "Internal Server Error " + e.message});
+                    res
+                        .status(500)
+                        .json({message: "Internal Server Error " + e.message});
                 })
                 break
             }
@@ -42,7 +50,9 @@ export class Controller {
                         .status(200)
                         .json({data: added, message: "Task Updated Successfully"});
                 }).catch(e => {
-                    res.status(500).json({message: "Internal Server Error " + e.message});
+                    res
+                        .status(500)
+                        .json({message: "Internal Server Error " + e.message});
                 })
             }
         }
