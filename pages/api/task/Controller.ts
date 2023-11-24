@@ -1,5 +1,5 @@
-import {NextApiRequest, NextApiResponse} from "next";
-import {TaskVerbs} from "./TaskVerbs";
+import {NextApiRequest, NextApiResponse} from "next"
+import {TaskVerbs} from "./TaskVerbs"
 const verbs = new TaskVerbs()
 export class Controller {
     public static async dispatch(req: NextApiRequest, res: NextApiResponse) {

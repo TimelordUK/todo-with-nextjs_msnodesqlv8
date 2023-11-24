@@ -1,18 +1,28 @@
 import * as React from "react"
-import {useState} from "react"
+import { useState } from "react"
 import styles from "../styles/Home.module.css"
-import {Task} from "../models/Task"
-import {TaskDataSource} from "../datasource/TaskDataSource"
+import { Task } from "../models/Task"
+import { TaskDataSource } from "../datasource/TaskDataSource"
+import { Connection, ConnectionPromises } from "msnodesqlv8/types"
+import dbConnect from "../utils/dbConnect"
 
 const taskDataSource = new TaskDataSource()
-export default function Home(props: any): (React.ReactElement | null) {
-	const [tasks, setTasks] = useState<Array<Task>>(props.tasks);
-	const [task, setTask] = useState<Partial<Task>>({ task: "" })
 
-	const handleChange = ({ currentTarget: input }) => {
+async function getConnection(): Promise<ConnectionPromises> {
+	const sql = dbConnect()
+	console.log(`[home] opening connection`)
+	const con: Connection = await sql.driver.promises.open(sql.connStr)
+return con.promises
+}
+
+const Home = (props: any): (React.ReactElement | null) => {
+	const [tasks, setTasks] = useState<Array<Task>>(props.tasks);
+	const [task, setTask] = useState<Partial<Task>>({task: ""})
+
+	const handleChange = ({currentTarget: input}) => {
 		input.value === ""
-			? setTask({ task: "" })
-			: setTask((prev) => ({ ...prev, task: input.value }))
+			? setTask({task: ""})
+			: setTask((prev) => ({...prev, task: input.value}))
 	};
 
 	const addTask = async (e) => {
@@ -24,12 +34,12 @@ export default function Home(props: any): (React.ReactElement | null) {
 				const index = originalTasks.findIndex((t: Task) => t._id === task._id)
 				originalTasks[index] = data.data
 				setTasks(originalTasks);
-				setTask({ task: "" })
+				setTask({task: ""})
 				console.log(data.message)
 			} else {
 				const data = await taskDataSource.POST(task)
 				setTasks((prev: Task[]) => [...prev, data.data])
-				setTask({ task: "" })
+				setTask({task: ""})
 				console.log(data.message)
 			}
 		} catch (error) {
@@ -46,7 +56,7 @@ export default function Home(props: any): (React.ReactElement | null) {
 		try {
 			const originalTasks = [...tasks];
 			const index = originalTasks.findIndex((t) => t._id === id)
-			const data = await taskDataSource.PUT(id,  {
+			const data = await taskDataSource.PUT(id, {
 				task: originalTasks[index].task,
 				completed: !originalTasks[index].completed,
 			})
@@ -60,7 +70,7 @@ export default function Home(props: any): (React.ReactElement | null) {
 
 	const deleteTask = async (id: number) => {
 		try {
-			const { data } = await taskDataSource.DELETE(id)
+			const {data} = await taskDataSource.DELETE(id)
 			setTasks((prev: Task[]) => prev.filter((task) => task._id !== id))
 			console.log(data.message)
 		} catch (error) {
@@ -122,6 +132,8 @@ export default function Home(props: any): (React.ReactElement | null) {
 }
 
 export const getServerSideProps = async () => {
+	const c = await getConnection()
+	await c.close()
 	const data = await taskDataSource.GET()
 	return {
 		props: {
@@ -129,3 +141,6 @@ export const getServerSideProps = async () => {
 		}
 	}
 }
+
+export default  Home
+
