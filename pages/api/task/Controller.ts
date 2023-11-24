@@ -6,20 +6,20 @@ export class Controller {
         const {method} = req;
         switch (method) {
             case 'GET': {
-                verbs.GET(req).then(tasks => {
-                    res
-                        .status(200)
-                        .json({data: tasks});
-                }).catch(e => {
+                return verbs.GET(req)
+                    .then(tasks => {
+                        res
+                            .status(200)
+                            .json({data: tasks});
+                    }).catch(e => {
                     res
                         .status(500)
                         .json({message: "Internal Server Error " + e.message});
                 })
-                break
             }
 
             case 'POST': {
-                verbs.POST(req).then(added => {
+                return verbs.POST(req).then(added => {
                     res
                         .status(201)
                         .json({data: added, message: "Task added successfully"});
@@ -28,11 +28,10 @@ export class Controller {
                         .status(500)
                         .json({message: "Internal Server Error " + e.message});
                 })
-                break
             }
 
             case 'DELETE': {
-                verbs.DELETE(req).then(added => {
+                return verbs.DELETE(req).then(added => {
                     res
                         .status(200)
                         .json({data: added, message: "Task Deleted Successfully"});
@@ -41,11 +40,10 @@ export class Controller {
                         .status(500)
                         .json({message: "Internal Server Error " + e.message});
                 })
-                break
             }
 
             case 'PUT': {
-                verbs.PUT(req).then(added => {
+                return verbs.PUT(req).then(added => {
                     res
                         .status(200)
                         .json({data: added, message: "Task Updated Successfully"});
