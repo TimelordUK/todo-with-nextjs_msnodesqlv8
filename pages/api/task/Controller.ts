@@ -1,7 +1,7 @@
 import {NextApiRequest, NextApiResponse} from "next"
 import {TaskVerbs} from "./TaskVerbs"
 const verbs = new TaskVerbs()
-type Action = (_: NextApiRequest) => Promise<any>
+type Action = () => Promise<any>
 type ToJSON = (data: any) => any
 
 export class Controller {
@@ -9,29 +9,29 @@ export class Controller {
         const {method} = req;
         switch (method) {
             case 'GET': {
-                return Controller.execute(req, res, r => verbs.GET(r),
+                return Controller.execute(res, () => verbs.GET(req),
                         tasks => { return { data: tasks } }, 200)
             }
 
             case 'POST': {
-                return Controller.execute(req, res, r => verbs.POST(r),
+                return Controller.execute(res, () => verbs.POST(req),
                     added => { return { data: added, message: "Task Added successfully" } }, 201)
             }
 
             case 'DELETE': {
-                return Controller.execute(req, res, r => verbs.DELETE(r),
+                return Controller.execute(res, () => verbs.DELETE(req),
                     deleted => { return { data: deleted, message: "Task Deleted successfully" } }, 200)
             }
 
             case 'PUT': {
-                return Controller.execute(req, res, r => verbs.PUT(r),
+                return Controller.execute(res, () => verbs.PUT(req),
                     updated => { return { data: updated, message: "Task Updated successfully" } }, 200)
             }
         }
     }
 
-    private static async execute(req: NextApiRequest, res: NextApiResponse, action: Action, toJson: ToJSON, status: number) {
-        return action(req)
+    private static async execute(res: NextApiResponse, action: Action, toJson: ToJSON, status: number) {
+        return action()
             .then(data => {
                 res
                     .status(status)
