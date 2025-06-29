@@ -8,15 +8,15 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "msnodesqlv8": "^4.5.0",
+    "msnodesqlv8": "file:../../v8/node_modules/msnodesqlv8/msnodesqlv8-5.0.0.tgz",
     "next": "^15.3.4",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
-    "@types/node": "24.0.4",
+    "@types/node": "24.0.7",
     "@types/react": "^19.1.8",
-    "eslint": "9.29.0",
+    "eslint": "9.30.0",
     "eslint-config-next": "15.3.4",
     "typescript": "^5.8.3"
   },
