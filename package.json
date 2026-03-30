@@ -8,17 +8,17 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "msnodesqlv8": "^5.1.5",
-    "next": "^16.1.6",
+    "msnodesqlv8": "^5.1.7",
+    "next": "^16.2.1",
     "react": "^19.2.4",
     "react-dom": "^19.2.4"
   },
   "devDependencies": {
-    "@types/node": "25.3.0",
+    "@types/node": "25.5.0",
     "@types/react": "^19.2.14",
-    "eslint": "10.0.1",
-    "eslint-config-next": "16.1.6",
-    "typescript": "^5.9.3"
+    "eslint": "10.1.0",
+    "eslint-config-next": "16.2.1",
+    "typescript": "^6.0.2"
   },
   "version": "1.0.3"
 }
