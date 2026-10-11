@@ -2252,10 +2252,10 @@ ms@^2.1.1, ms@^2.1.3:
   resolved "https://registry.npmjs.org/ms/-/ms-2.1.3.tgz"
   integrity sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==
 
-msnodesqlv8@^5.5.1:
-  version "5.5.1"
-  resolved "https://registry.yarnpkg.com/msnodesqlv8/-/msnodesqlv8-5.5.1.tgz#e01eb5fcb55322450d7c6322b1abc5bdbba9b2fb"
-  integrity sha512-Rf3orI36VSYDpUB98QMNxlGCaa96F9HtuvG3pyyNEpijbgMcvk4s5Xru5e55+4BzHBdl5AYvSBJP6T+fhjFnvg==
+msnodesqlv8@^5.6.0:
+  version "5.6.0"
+  resolved "https://registry.yarnpkg.com/msnodesqlv8/-/msnodesqlv8-5.6.0.tgz#3652f9d907e8bd3dce4daba5d469a662a11310d1"
+  integrity sha512-x/VxIXeZoX+gMAPD4FonnEDgSdbfEz9ChQNCe7mMMuArdFLKXnxlwQKeMpA8i3HD+MgxeVI/oTfd/dYS/4MBQg==
   dependencies:
     node-addon-api "^8.7.0"
     node-gyp-build "^4.8.4"
